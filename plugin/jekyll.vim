@@ -1,46 +1,46 @@
-" jekyll.vim
-" Author:  Joshua Priddle <jpriddle@me.com>
-" URL:     https://github.com/itspriddle/vim-jekyll
+" pelican.vim
+" Author:  mt3
+" URL:     https://github.com/mt3/pelican.vim
 " Version: 0.1.0
 " License: Same as Vim itself (see :help license)
 
-if exists('g:loaded_jekyll') || &cp || v:version < 700
+if exists('g:loaded_pelican') || &cp || v:version < 700
   finish
 endif
-let g:loaded_jekyll = 1
+let g:loaded_pelican = 1
 
 " Configuration {{{
 
 " Directories to search for posts. _source/_posts is for Octopress.
-if ! exists('g:jekyll_post_dirs')
-  let g:jekyll_post_dirs = ['_posts', '_source/_posts']
+if ! exists('g:pelican_post_dirs')
+  let g:pelican_post_dirs = ['_posts', '_source/_posts']
 endif
 
 " Extension used when creating new posts
-if ! exists('g:jekyll_post_extension')
-  let g:jekyll_post_extension = '.markdown'
+if ! exists('g:pelican_post_extension')
+  let g:pelican_post_extension = '.rst'
 endif
 
 " Filetype applied to new posts
-if ! exists('g:jekyll_post_filetype')
-  let g:jekyll_post_filetype = 'liquid'
+if ! exists('g:pelican_post_filetype')
+  let g:pelican_post_filetype = 'liquid'
 endif
 
 " Template for new posts
-if ! exists('g:jekyll_post_template')
-  let g:jekyll_post_template = [
+if ! exists('g:pelican_post_template')
+  let g:pelican_post_template = [
     \ '---',
     \ 'layout: post',
-    \ 'title: "JEKYLL_TITLE"',
-    \ 'date: "JEKYLL_DATE"',
+    \ 'title: "PELICAN_TITLE"',
+    \ 'date: "PELICAN_DATE"',
     \ '---',
     \ '']
 endif
 
-" Directory to place generated files in, relative to b:jekyll_root_dir.
+" Directory to place generated files in, relative to b:pelican_root_dir.
 " Usually _site
-if ! exists('g:jekyll_site_dir')
-  let g:jekyll_site_dir = '_site'
+if ! exists('g:pelican_site_dir')
+  let g:pelican_site_dir = '_site'
 endif
 
 " }}}
@@ -93,7 +93,7 @@ endfunction
 
 " Returns the filename for a new post based on it's title.
 function! s:post_filename(title)
-  return b:jekyll_post_dir.'/'.strftime('%Y-%m-%d-').s:dasherize(a:title).g:jekyll_post_extension
+  return b:pelican_post_dir.'/'.strftime('%Y-%m-%d-').s:dasherize(a:title).g:pelican_post_extension
 endfunction
 "
 " Strips whitespace and escapes double quotes
@@ -106,9 +106,9 @@ endfunction
 
 " Used to autocomplete posts
 function! s:post_list(A, L, P)
-  let prefix   = b:jekyll_post_dir.'/'
+  let prefix   = b:pelican_post_dir.'/'
   let data     = s:gsub(glob(prefix.'*.*')."\n", prefix, '')
-  let data     = s:gsub(data, '\'.g:jekyll_post_extension."\n", "\n")
+  let data     = s:gsub(data, '\'.g:pelican_post_extension."\n", "\n")
   let files    = reverse(split(data, "\n"))
   let filtered = filter(copy(files), 's:startswith(v:val, a:A)')
 
@@ -135,28 +135,28 @@ function! s:create_post(cmd, ...)
 
   if empty(title)
     return s:error('You must specify a title')
-  elseif filereadable(b:jekyll_post_dir.'/'.title.g:jekyll_post_extension)
+  elseif filereadable(b:pelican_post_dir.'/'.title.g:pelican_post_extension)
     return s:error(title.' already exists!')
   endif
 
   call s:load_post(a:cmd, s:post_filename(title))
 
-  let error = append(0, g:jekyll_post_template)
+  let error = append(0, g:pelican_post_template)
 
   if error > 0
     return s:error("Couldn't create post.")
   else
-    let &ft = g:jekyll_post_filetype
+    let &ft = g:pelican_post_filetype
 
     let date = strftime('%a %b %d %T %z %Y')
-    silent! %s/JEKYLL_TITLE/\=s:post_title(title)/g
-    silent! %s/JEKYLL_DATE/\=date/g
+    silent! %s/PELICAN_TITLE/\=s:post_title(title)/g
+    silent! %s/PELICAN_DATE/\=date/g
   endif
 endfunction
 
 " Edit a post
 function! s:edit_post(cmd, post)
-  let file = b:jekyll_post_dir.'/'.a:post.g:jekyll_post_extension
+  let file = b:pelican_post_dir.'/'.a:post.g:pelican_post_extension
 
   if filereadable(file)
     return s:load_post(a:cmd, file)
@@ -176,23 +176,23 @@ function! s:open_post(create, cmd, ...)
 endfunction
 
 " Return the command used to build the blog.
-function! s:jekyll_bin()
-  let bin = 'jekyll --no-auto --no-server '
+function! s:pelican_bin()
+  let bin = 'pelican --no-auto --no-server '
 
-  if filereadable(b:jekyll_root_dir.'/Gemfile')
+  if filereadable(b:pelican_root_dir.'/Gemfile')
     let bin = 'bundle exec '.bin
   endif
 
-  let bin .= b:jekyll_root_dir.' '.b:jekyll_root_dir.'/'.g:jekyll_site_dir
+  let bin .= b:pelican_root_dir.' '.b:pelican_root_dir.'/'.g:pelican_site_dir
   return bin
 endfunction
 
-" Return 'jekyll' or 'bundle exec jekyll'
-function! s:jekyll_build(cmd)
-  if exists('g:jekyll_build_command') && ! empty(g:jekyll_build_command)
-    let bin = g:jekyll_build_command
+" Return 'pelican' or 'bundle exec pelican'
+function! s:pelican_build(cmd)
+  if exists('g:pelican_build_command') && ! empty(g:pelican_build_command)
+    let bin = g:pelican_build_command
   else
-    let bin = s:jekyll_bin()
+    let bin = s:pelican_bin()
   endif
 
   echo 'Building, this may take a moment'
@@ -225,15 +225,15 @@ function! s:register_commands()
     call s:define_command('-bang -nargs=? -complete=customlist,s:post_list J'.cmd.'post :call s:open_post(<bang>0, "'.cmd.'", <q-args>)')
   endfor
 
-  call s:define_command('-nargs=* Jbuild call s:jekyll_build("<args>")')
+  call s:define_command('-nargs=* Jbuild call s:pelican_build("<args>")')
 endfunction
 
 " Try to locate the _posts directory
-function! s:find_jekyll(path) abort
+function! s:find_pelican(path) abort
   let cur_path = a:path
   let old_path = ""
   while old_path != cur_path
-    for dir in g:jekyll_post_dirs
+    for dir in g:pelican_post_dirs
       let dir      = s:escape_path(dir)
       if isdirectory(cur_path.'/'.dir)
         return [cur_path, cur_path.'/'.dir]
@@ -245,26 +245,26 @@ function! s:find_jekyll(path) abort
   return ['', '']
 endfunction
 
-" Initialize the plugin if we can detect a Jekyll blog
+" Initialize the plugin if we can detect a Pelican blog
 function! s:init(path)
-  let [root_dir, post_dir] = s:find_jekyll(a:path)
+  let [root_dir, post_dir] = s:find_pelican(a:path)
 
   if empty(post_dir) || empty(root_dir)
     return
   endif
 
-  let b:jekyll_root_dir = root_dir
-  let b:jekyll_post_dir = post_dir
+  let b:pelican_root_dir = root_dir
+  let b:pelican_post_dir = post_dir
 
-  silent doautocmd User Jekyll
+  silent doautocmd User Pelican
 endfunction
 
-augroup jekyll_commands
+augroup pelican_commands
   autocmd!
-  autocmd User Jekyll call s:register_commands()
+  autocmd User Pelican call s:register_commands()
 augroup END
 
-augroup jekyll_init
+augroup pelican_init
   autocmd!
   autocmd BufNewFile,BufReadPost * call s:init(expand('<amatch>:p'))
   autocmd FileType           netrw call s:init(expand('<afile>:p'))
@@ -276,4 +276,4 @@ augroup END
 
 " }}}
 
-" vim:ft=vim:fdm=marker:ts=2:sw=2:sts=2:et
+" vim:ft=vim:fdm=marker:ts=4:sw=4:sts=4:et
