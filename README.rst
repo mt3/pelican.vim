@@ -1,4 +1,4 @@
-.. Error:: UNSTABLE. DO NOT USE YET!
+UNSTABLE. DO NOT USE YET!
 
 
 pelican.vim
