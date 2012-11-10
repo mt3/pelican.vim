@@ -1,4 +1,4 @@
-*pelican.txt* Blogging from the command line should not be tedious.
+*pelican.txt*
 
 Author: mt3
 
@@ -6,16 +6,7 @@ Author: mt3
 INTRODUCTION                                    *pelican*
 
 This script is intended to automate the process of creating and editing
-Pelican (http://pelicanrb.com/) blog posts from within vim.
-
-This is complete rewrite of csexton/jekyll.vim
-(https://github.com/csexton/jekyll.vim/) with these improvements:
-
-* Commands to edit/split/vsplit/tabnew a post
-* Tab completion for opening existing posts
-* Recognizes Octopress blogs and others with custom `_posts` directory
-* Customizable template for new posts
-* Customizable build command, with automatic support for bundler
+Pelican (http://getpelican.com/) blog posts from within vim.
 
 ==============================================================================
 CONFIGURATION                                   *pelican-configuration*
@@ -30,7 +21,7 @@ directory. For most Pelican blogs, this will be `_posts`. Octopress posts are
 kept in `_source/_posts`.
 
                                                 *g:pelican_post_extension*  >
-    let g:pelican_post_extension = '.markdown'
+    let g:pelican_post_extension = '.rst'
 The extension used when creating new posts.
 
                                                 *g:pelican_post_filetype*  >
@@ -60,27 +51,27 @@ Custom command to use to build your blog. By default this is unset.
 ==============================================================================
 COMMANDS                                        *pelican-commands*
 
-The |:Jpost| (Pelican post) command is used to create and edit blog posts. It
+The |:Ppost| (Pelican post) command is used to create and edit blog posts. It
 has variants for opening a post in a horizontal or vertical split or a new
-tab. Call with a bang, (eg: :Jpost!) to create a new post. Call without a bang
-(eg: :Jpost) to edit a post. The |:Jbuild| command can be used to build a
+tab. Call with a bang, (eg: :Ppost!) to create a new post. Call without a bang
+(eg: :Ppost) to edit a post. The |:Pbuild| command can be used to build a
 blog.
 
-                                                *pelican-:Jpost*
-:Jpost[!]  [{name}] Create or edit the specified post. With no argument, you
+                                                *pelican-:Ppost*
+:Ppost[!]  [{name}] Create or edit the specified post. With no argument, you
                     will be prompted to select a post or enter a title.
 
-                                                *pelican-:JSpost*
-:JSpost[!] [{name}] Same as |:Jpost|, but opens post in a horizontal split.
+                                                *pelican-:PSpost*
+:PSpost[!] [{name}] Same as |:Jpost|, but opens post in a horizontal split.
 
-                                                *pelican-:JVpost*
-:JVpost[!] [{name}] Same as |:Jpost|, but opens post in a vertical split.
+                                                *pelican-:PVpost*
+:PVpost[!] [{name}] Same as |:Jpost|, but opens post in a vertical split.
 
-                                                *pelican-:JTpost*
-:JTpost[!] [{name}] Same as |:Jpost|, but opens post in a tab.
+                                                *pelican-:PTpost*
+:PTpost[!] [{name}] Same as |:Jpost|, but opens post in a tab.
 
-                                                *pelican-:Jbuild*
-:Jbuild [{args}]    Generate blog. This will check for the presence of a
+                                                *pelican-:Pbuild*
+:Pbuild [{args}]    Generate blog. This will check for the presence of a
                     Gemfile; if found `bundle exec` is used to run the
                     `pelican` command. The blog will be built with: >
 
@@ -99,5 +90,6 @@ https://github.com/mt3/pelican.vim
 
                                                 *pelican-license*
 Distributed under the same terms as Vim itself. See |license|.
+
 
  vim:tw=78:et:ft=help:norl:
