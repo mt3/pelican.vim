@@ -11,6 +11,7 @@ This script is intended to automate the process of creating and editing
 
 This is a complete rewrite of
 `csexton/jekyll.vim <https://github.com/csexton/jekyll.vim>`_ for the Pelican crowd.
+Also see `vim-octopress <https://github.com/tangledhelix/vim-octopress>`_ for further inspirations.
 
 
 License
